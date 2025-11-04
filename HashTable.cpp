@@ -2,7 +2,6 @@
 
 #include <algorithm>
 #include <random>
-#include <bits/locale_facets_nonio.h>
 
 HashTable::HashTable(size_t initCapacity)
     : buckets(initCapacity),
@@ -30,6 +29,8 @@ bool HashTable::insert(const std::string &key, const size_t &value) {
             inserted = true;
         }
     }
+    if (alpha() >= .5)
+        resize(buckets.size() * 2);
     return inserted;
 }
 
@@ -131,6 +132,30 @@ bool HashTable::HashTableBucket::isEmpty() const {
     return type != BucketType::NORMAL;
 }
 
+std::string HashTable::HashTableBucket::getKey() const {
+    return key;
+}
 
+size_t HashTable::HashTableBucket::getValue() const {
+    return value;
+}
 
+std::ostream &operator<<(std::ostream &os, const HashTable &obj) {
+    for (const auto & bucket : obj.buckets) {
+        if (bucket.isEmpty())
+            continue;
+        os << "Key: " << bucket.getKey() << " -- Value: " << bucket.getValue() << std::endl;
+    }
+    return os;
+}
+
+void HashTable::resize(size_t newCapacity) {
+    HashTable temp(newCapacity);
+    for (const HashTableBucket &bucket : buckets) {
+        if (bucket.isEmpty())
+            continue;
+        temp.insert(bucket.getKey(), bucket.getValue());
+    }
+    *this = std::move(temp);
+}
 

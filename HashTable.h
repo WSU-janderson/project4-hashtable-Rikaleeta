@@ -14,13 +14,15 @@ public:
     explicit HashTable(size_t initCapacity = 8);
     bool insert(const std::string &key, const size_t &value);
     bool remove(const std::string &key);
-    bool contains(const std::string &key) const;
+    [[nodiscard]] bool contains(const std::string &key) const;
     [[nodiscard]] std::optional<size_t> get(const std::string &key) const;
     size_t &operator[](const std::string &key);
     [[nodiscard]] std::vector<std::string> keys() const;
     [[nodiscard]] double alpha() const;
     [[nodiscard]] size_t capacity() const;
     [[nodiscard]] size_t size() const;
+    friend std::ostream &operator<<(std::ostream &os, const HashTable &obj);
+    void resize(size_t newCapacity);
 
 private:
     enum class BucketType {
@@ -29,7 +31,7 @@ private:
         EMPTY_SINCE_REMOVAL
     };
 
-    size_t probe(std::string key, size_t i) const;
+    [[nodiscard]] size_t probe(std::string key, size_t i) const;
 
     class HashTableBucket {
     public:
@@ -37,10 +39,10 @@ private:
         HashTableBucket(const std::string &key, const size_t &value);
         void load(const std::string &key, const size_t &value);
         void kill();
-        bool isEmpty() const;
+        [[nodiscard]] bool isEmpty() const;
         friend std::ostream &operator<<(std::ostream &os, const HashTableBucket &bucket);
-        std::string getKey() const;
-        size_t getValue() const;
+        [[nodiscard]] std::string getKey() const;
+        [[nodiscard]] size_t getValue() const;
         size_t &operator*();
 
     private:
